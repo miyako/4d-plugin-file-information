@@ -45,7 +45,7 @@ void CommandDispatcher (PA_long32 pProcNum, sLONG_PTR *pResult, PackagePtr pPara
 
 
 void FILE_Get_information(sLONG_PTR *pResult, PackagePtr pParams)
-{   
+{
 	C_TEXT Param1;
 	ARRAY_TEXT Param2;
 	ARRAY_TEXT Param3;
@@ -54,7 +54,7 @@ void FILE_Get_information(sLONG_PTR *pResult, PackagePtr pParams)
 	Param1.fromParamAtIndex(pParams, 1);
 	Param2.setSize(1);
 	Param3.setSize(1);
-#if VERSIONWIN
+
     DWORD flags = FILE_VER_GET_LOCALISED | FILE_VER_GET_NEUTRAL;
     LPCTSTR path = (LPCTSTR)Param1.getUTF16StringPtr();
     DWORD h;    //this parameter exists for historical reasons.
@@ -114,7 +114,8 @@ void FILE_Get_information(sLONG_PTR *pResult, PackagePtr pParams)
 													Param2.appendUTF16String((const PA_Unichar *)params[j]);
 													Param3.appendUTF16String((const PA_Unichar *)lpBuffer);
 							}else{
-								returnValue.setIntValue(ERR_CANT_QUERY_VALUE);
+									Param2.appendUTF16String((const PA_Unichar *)params[j]);
+									Param3.appendUTF16String((const PA_Unichar *)L"");
 							}
                         }
                     }
@@ -126,7 +127,7 @@ void FILE_Get_information(sLONG_PTR *pResult, PackagePtr pParams)
 	}else{
 		returnValue.setIntValue(ERR_CANT_GET_SIZE);	
 	}
-#endif    
+    
 	Param2.toParamAtIndex(pParams, 2);
 	Param3.toParamAtIndex(pParams, 3);
 	returnValue.setReturn(pResult);
