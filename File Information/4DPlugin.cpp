@@ -59,12 +59,14 @@ void FILE_Get_information(sLONG_PTR *pResult, PackagePtr pParams)
     LPCTSTR path = (LPCTSTR)Param1.getUTF16StringPtr();
     DWORD h;    //this parameter exists for historical reasons.
     
-    DWORD size = GetFileVersionInfoSizeEx(flags, path, &h);
-    
+    //DWORD size = GetFileVersionInfoSizeEx(flags, path, &h);
+    DWORD size = GetFileVersionInfoSize(path, &h);
+
     if(size){
         
         std::vector<char> buf(size);
-        if(GetFileVersionInfoEx(flags | FILE_VER_GET_PREFETCHED, path, h, size, (LPVOID)&buf[0])){
+        //if(GetFileVersionInfoEx(flags | FILE_VER_GET_PREFETCHED, path, h, size, (LPVOID)&buf[0])){
+		if(GetFileVersionInfo(path, h, size, (LPVOID)&buf[0])){
             
             struct LANGANDCODEPAGE {
                 WORD wLanguage;
