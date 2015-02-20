@@ -1,6 +1,8 @@
 # 4d-plugin-file-information
 
-read file DLL/EXE information on windows
+read file DLL/EXE information on windows.
+
+**Note**: The [GetFileVersionInfoEx](https://msdn.microsoft.com/en-us/library/windows/desktop/aa969434(v=vs.85).aspx) exists on Windows Vista and above, Windows Server 2008 and above.
 
 Example
 ---
