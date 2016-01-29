@@ -1,6 +1,20 @@
 # 4d-plugin-file-information
 
-read file DLL/EXE information on windows.
+Read file DLL/EXE information on windows.
+
+##Platform
+
+| carbon | cocoa | win32 | win64 |
+|:------:|:-----:|:---------:|:---------:|
+|🚫|🚫|🆗|🆗|
+
+Commands
+---
+
+```c
+// --- File
+FILE_Get_information
+```
 
 **Note**: ~~The [GetFileVersionInfoEx](https://msdn.microsoft.com/en-us/library/windows/desktop/aa969434(v=vs.85).aspx) function exists on Windows Vista and above, Windows Server 2008 and above~~.
 
