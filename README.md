@@ -1,26 +1,19 @@
 # 4d-plugin-file-information
 
-Read file DLL/EXE information on windows.
+Get DLL/EXE file information.
 
-##Platform
+### Platform
 
 | carbon | cocoa | win32 | win64 |
 |:------:|:-----:|:---------:|:---------:|
-|🚫|🚫|🆗|🆗|
+||<img src="https://cloud.githubusercontent.com/assets/1725068/22371562/1b091f0a-e4db-11e6-8458-8653954a7cce.png" width="24" height="24" />|<img src="https://cloud.githubusercontent.com/assets/1725068/22371562/1b091f0a-e4db-11e6-8458-8653954a7cce.png" width="24" height="24" />|<img src="https://cloud.githubusercontent.com/assets/1725068/22371562/1b091f0a-e4db-11e6-8458-8653954a7cce.png" width="24" height="24" />|
 
-Commands
----
+### Version
 
-```c
-// --- File
-FILE_Get_information
-```
+<img src="https://user-images.githubusercontent.com/1725068/41266195-ddf767b2-6e30-11e8-9d6b-2adf6a9f57a5.png" width="32" height="32" />
 
-**Note**: ~~The [GetFileVersionInfoEx](https://msdn.microsoft.com/en-us/library/windows/desktop/aa969434(v=vs.85).aspx) function exists on Windows Vista and above, Windows Server 2008 and above~~.
+![preemption xx](https://user-images.githubusercontent.com/1725068/41327179-4e839948-6efd-11e8-982b-a670d511e04f.png)
 
-Now using old [GetFileVersionInfo](https://msdn.microsoft.com/en-us/library/windows/desktop/ms647003(v=vs.85).aspx) instead.
+### Syntax
 
-Example
----
-
-![](https://github.com/miyako/4d-plugin-file-information/blob/master/images/1.png)
+[miyako.github.io](https://miyako.github.io/2019/12/13/4d-plugin-file-information.html)
