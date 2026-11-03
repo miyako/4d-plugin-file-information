@@ -1,0 +1,11 @@
+.DS_Store
+build/
+Objs/
+/File Information.dmg
+/File Information.zip
+test/Data/Logs/
+test/Logs/
+test/userPreferences.*/
+test/Project/DerivedData/
+test/Plugins/File Information.bundle/Contents/MacOS/
+test/Plugins/File Information.bundle/Contents/_CodeSignature/
