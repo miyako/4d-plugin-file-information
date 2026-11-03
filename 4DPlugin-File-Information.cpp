@@ -66,16 +66,16 @@ void FILE_Get_information(PA_PluginParameters params) {
             struct LANGANDCODEPAGE {
                 WORD wLanguage;
                 WORD wCodePage;
-            } *lpTranslate;
+            } *lpTranslate = NULL;
             
-            UINT len;
+            UINT len = 0;
             
             if(VerQueryValue((LPCVOID)&buf[0],
                              L"\\VarFileInfo\\Translation",
                              (LPVOID *)&lpTranslate,
-                             &len)){
+                             &len) && lpTranslate){
                 
-                wchar_t *params[] = {
+                const wchar_t *params[] = {
                     L"Comments",
                     L"CompanyName",
                     L"FileDescription",
@@ -91,7 +91,13 @@ void FILE_Get_information(PA_PluginParameters params) {
                           
                 wchar_t tmp[STRTEMP_SIZE];
                 
-                for(unsigned int i = 0; i < (len/sizeof(struct LANGANDCODEPAGE)); ++i)
+                // number of translations: fixed before the loop, because the
+                // VerQueryValue calls below must not overwrite it (they used to
+                // reuse `len`, so the loop bound became a string length and
+                // lpTranslate[i] could be read past the translation table)
+                const unsigned int countTranslations = len / sizeof(struct LANGANDCODEPAGE);
+                
+                for(unsigned int i = 0; i < countTranslations; ++i)
                 {
                     for(unsigned int j = 0; j < PARAMS_SIZE; ++j){
                     
@@ -102,14 +108,17 @@ void FILE_Get_information(PA_PluginParameters params) {
                                            params[j]))
                         {
                         
-                            LPVOID lpBuffer;
+                            LPVOID lpBuffer = NULL;
+                            UINT valueLen = 0; // in characters, may include the terminating NUL
                             
                             if(VerQueryValue((LPCVOID)&buf[0],
                                              tmp,
                                              &lpBuffer,
-                                             &len)){
+                                             &valueLen) && lpBuffer){
+                                                    const PA_Unichar *value = (const PA_Unichar *)lpBuffer;
+                                                    while((valueLen) && (value[valueLen - 1] == 0)) --valueLen;
                                                     Param2.appendUTF16String((const PA_Unichar *)params[j]);
-                                                    Param3.appendUTF16String((const PA_Unichar *)lpBuffer);
+                                                    Param3.appendUTF16String(value, (uint32_t)valueLen);
                             }else{
                                     Param2.appendUTF16String((const PA_Unichar *)params[j]);
                                     Param3.appendUTF16String((const PA_Unichar *)L"");
