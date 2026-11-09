@@ -18,6 +18,102 @@ Get DLL/EXE file information.
 
 Original article: [miyako.github.io](https://miyako.github.io/2019/12/13/4d-plugin-file-information.html)
 
+## Manual source version and publication
+
+**Bump version** and **Build** are independent manual Actions workflows. Select
+the source branch in the UI. Bump offers `patch`, `minor`, and `major`, and
+commits only source version metadata to that branch. It never tags, publishes,
+or dispatches Build. **Build has zero inputs** (only the Actions ref selector);
+it derives the version, `vX.Y.Z` tag, and asset names from the selected source.
+Neither workflow runs on push. Every checkout pins `${{ github.sha }}`.
+No new branch restriction is introduced; Bump requires a selected branch.
+
+### Authority and intake repair
+
+The original `02309b6` bump header explicitly promises coordinated
+`MARKETING_VERSION`/`CURRENT_PROJECT_VERSION` and
+`CFBundleShortVersionString`/`CFBundleVersion`, overriding its buggy
+marketing-first/current-fallback implementation. The subsequent `f29be0c`
+bump advanced all three marketing fields and `Info.plist` to **2.0.2**, but
+left all three current/build fields at 2.0.1. Rename-follow history of the
+project, plist, and English strings reaches `4ca7641` (`2.0`) and `f0f6e1b`;
+the Xcode project actually copies `English.lproj/InfoPlist.strings` through its
+Resources phase and uses the root `Info.plist` in all three target configurations.
+The source English strings still displayed 2.0.
+
+This migration repairs only the three current/build fields and the two
+localized displays to the **existing 2.0.2**, without an intake increment.
+It preserves the absent optional `CFBundleVersion`, CR-only localization,
+copyright, file modes, and unrelated bytes. The old plist and UTF-16 English
+strings inside the committed test bundle are **prebuilt outputs**, not extra
+source inputs; they remain untouched. Build invalidates these stale copied
+metadata products before Xcode runs and verifies the newly built values.
+
+All three assignments of each project version key must agree with the source
+plist and both localized displays as strict `X.Y.Z`. Supported Xcode references
+are preserved; unknown/cyclic references, drift, duplicate plist or localized
+keys (including quoted/inline duplicates), and unsupported serialization fail
+before writes. Rewrites preserve BOMs, CR/LF/CRLF/mixed endings, whitespace,
+modes, and unrelated bytes. Prebuilt bundles, Windows projects, dependencies,
+4D data/catalogs, manifests, schema and localization counters are excluded.
+The existing remote `v2.0.2` intentionally blocks publication of intake:
+run Bump before a future Build needs a fresh publication version.
+
+The full exact committed prior art was compared and adapted:
+[`native-encoding-detection@c42ca56`](https://github.com/miyako/4d-plugin-native-encoding-detection/tree/c42ca565857f674bde5ea6ed3435c87375eda4a7)
+supplies the coordinated contract, strict localized tokenizer, advertised-SHA
+guard, lifecycle and closed-PATH native tests;
+[`codec@72c6748`](https://github.com/miyako/4d-plugin-codec/tree/72c67486d8f8ca88c1d72935137502b3d7ac4465)
+demonstrates two actual source plists, unlike this project's single source plist;
+[`common-string-algorithm@2606a68`](https://github.com/miyako/4d-plugin-common-string-algorithm/tree/2606a68201866ec9fcbb38b51462d79215f504ef)
+and corrected
+[`window-button@3f14fac`](https://github.com/miyako/4d-plugin-window-button/tree/3f14facb9aaaaff0e22eeb8e07531163680c3a8a)
+preserve independent build metadata under marketing-only/fallback headers.
+That independent policy is not imported into this explicitly coordinated project.
+
+### Publication safeguards and recovery
+
+Bump requires a clean checkout and the exact selected remote branch SHA.
+Its generated commit must be a source-only, single-parent direct child with
+the Copilot coauthor trailer. A mandatory executable pre-push guard is checked
+initially and immediately before push; it requires exactly one advertised
+update with the expected old SHA, literal new SHA/HEAD, selected target and
+parent. Advance, rewind, deletion, and same-result races fail. Push is
+nonforce with both `push.followTags=false` and `--no-follow-tags`.
+
+Build preserves Windows x64, MSBuild v143/SDK 10.0, macOS universal
+arm64+x86_64, Xcode Default/deployment 11.5, resources, dependencies,
+`windows-binaries`, all six existing signing/notary secret names, and
+`File Information-X.Y.Z.zip`/`.dmg`. Exact fresh output paths, source-matching
+bundle metadata, both architectures with no legacy i386 slice, signature verification, both notary
+statuses `Accepted`, and DMG stapling are required before publication.
+
+All branches share constant `release-publication` concurrency with cancellation
+disabled. Early and final checks require exact remote tag absence and authenticated,
+fully paginated release lists including drafts. Invalid data, 404, authentication,
+network and later-page errors fail closed. Publication uses separate create-only
+POSTs: tag ref pinned to selected SHA, remote verification, new public
+nonprerelease release with explicit tag/target/name and original empty body
+(no generated notes), then assets only to the newly returned release ID.
+No reuse, updates, deletion, clobber, rollback or automatic retries occur.
+
+**Failures retain partial state**, including a tag, public release and earlier
+successful uploads. Inspect the selected SHA/tag, remote refs, drafts/public
+releases and assets before deciding on manual recovery or a fresh source bump.
+Do not blindly rerun; an existing tag/release deliberately blocks publication.
+A branch race requires review and a fresh Bump dispatch, never a forced push.
+
+### Local checks
+
+Run `actionlint .github/workflows/*.yml` and
+`PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s .github/tests -v`.
+The full suite also runs in a disposable post-bump source copy. Fixtures cover
+live and stable versions, byte/mode preservation, exclusions, duplicates and
+references, real local bare-Git races/guard loss/multiparent commits, mocked
+paginated APIs/races/retained state/payloads, and closed-PATH native stubs.
+PowerShell (`pwsh`) enables the Windows shell harness. Tests do not execute
+native builds, signing, notarization, 4D, Actions dispatch or GitHub publication.
+
 ---
 
 # File Information
