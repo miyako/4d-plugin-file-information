@@ -85,7 +85,7 @@ Build preserves Windows x64, MSBuild v143/SDK 10.0, macOS universal
 arm64+x86_64, Xcode Default/deployment 11.5, resources, dependencies,
 `windows-binaries`, all six existing signing/notary secret names, and
 `File Information-X.Y.Z.zip`/`.dmg`. Exact fresh output paths, source-matching
-bundle metadata, both architectures, signature verification, both notary
+bundle metadata, both architectures with no legacy i386 slice, signature verification, both notary
 statuses `Accepted`, and DMG stapling are required before publication.
 
 All branches share constant `release-publication` concurrency with cancellation

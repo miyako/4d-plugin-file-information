@@ -248,8 +248,13 @@ jobs:
           echo "Timestamp check (must be recent):"
           ls -lT "$BIN" || ls -l --time-style=full "$BIN"
 
-          lipo -info "$BIN"
+          ARCH_INFO=$(lipo -info "$BIN")
+          echo "$ARCH_INFO"
           lipo -verify_arch arm64 x86_64 "$BIN"
+          if grep -qw "i386" <<< "$ARCH_INFO"; then
+            echo "::error::i386 slice found - this is a stale binary, not the fresh build"
+            exit 1
+          fi
 
           # runtime dylibs committed next to the binary must be universal too
           for lib in "${CONTENTS}"/MacOS/*.dylib; do

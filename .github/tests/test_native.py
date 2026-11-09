@@ -343,6 +343,18 @@ class NativeShellTests(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0)
         self.assertEqual(self.calls("python3"), [])
 
+    def test_i386_rejected_even_with_both_required_architectures(self):
+        self.build()
+        result = self.run_step("verify universal binary", ARCHS="arm64 x86_64 i386")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("i386 slice found", result.stdout)
+        self.assertIn(
+            ["-verify_arch", "arm64", "x86_64",
+             f"{self.relative_bundle}/Contents/MacOS/File Information"],
+            self.calls("lipo"),
+        )
+        self.assertEqual(self.calls("python3"), [])
+
     def test_runtime_dylibs_preserved_and_independently_verified(self):
         dependency = "MacOS/Dependency.dylib"
         self.write(dependency, b"committed runtime library")
